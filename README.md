@@ -1,7 +1,18 @@
+# Recommendation Engine
 
+Tag-overlap toy recommender.
 
-## Related
+## Features
+- Interactive demo
 
-- **Mobile App:** [bookchaowalit-recommendation-engine-mobile](https://github.com/bookchaowalit-mobile/bookchaowalit-recommendation-engine-mobile)
-- **Portfolio:** [bookchaowalit.com](https://bookchaowalit.com)
+## Limitations
+- Not production ML/SaaS
 
+## Run
+```bash
+npm install
+npm run dev
+```
+
+## Honesty
+Portfolio demo. Not multi-tenant SaaS. Prefer local-only state over fake production claims.
