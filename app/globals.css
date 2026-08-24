@@ -1,26 +1,157 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #07110d;
+  --ink-soft: #0d1b14;
+  --grid: #193329;
+  --phosphor: #b6ff6a;
+  --phosphor-dim: #6cae4f;
+  --amber: #ffbd68;
+  --muted: #76947b;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+* { box-sizing: border-box; }
+html { background: var(--ink); }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--ink);
+  color: var(--phosphor);
+  font-family: var(--font-geist-mono), "Courier New", monospace;
+}
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+::selection { background: var(--phosphor); color: var(--ink); }
+
+.glyph-shell {
+  min-height: 100vh;
+  padding: 22px;
+  background: var(--ink);
+}
+.glyph-frame {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  border: 1px solid var(--grid);
+  background: rgba(7, 17, 13, 0.94);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+}
+.glyph-masthead, .glyph-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 14px 20px; border-bottom: 1px solid var(--grid);
+  color: var(--muted); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+}
+.glyph-footer { border-top: 1px solid var(--grid); border-bottom: 0; }
+.glyph-brand, .glyph-status, .glyph-rule-label, .glyph-section-head, .glyph-readout {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+}
+.glyph-brand { color: var(--phosphor); }
+.glyph-led, .glyph-status-dot::before {
+  display: inline-block; width: 7px; height: 7px; background: var(--phosphor);
+  box-shadow: 0 0 14px var(--phosphor);
+}
+.glyph-status { flex-wrap: wrap; justify-content: flex-end; }
+.glyph-status-dot { color: var(--amber); }
+.glyph-status-dot::before {
+  width: 5px; height: 5px; margin-right: 7px; background: var(--amber);
+  box-shadow: 0 0 10px var(--amber); content: "";
+}
+.glyph-intro {
+  position: relative; padding: clamp(42px, 8vw, 92px) clamp(22px, 7vw, 86px) 62px;
+  border-bottom: 1px solid var(--grid); overflow: hidden;
+}
+.glyph-intro::after {
+  position: absolute; right: 6%; bottom: 20px; width: min(38vw, 370px); height: 160px;
+  background: repeating-linear-gradient(90deg, transparent 0 12px, rgba(182, 255, 106, 0.08) 13px);
+  opacity: 0.8; content: ""; pointer-events: none; mask-image: linear-gradient(90deg, transparent, #000);
+}
+.glyph-rule-label {
+  max-width: 420px; margin-bottom: 26px; color: var(--muted);
+  font-size: 10px; letter-spacing: 0.15em;
+}
+.glyph-intro h1 {
+  position: relative; z-index: 1; max-width: 720px; margin: 0; color: var(--phosphor);
+  font-family: Georgia, serif; font-size: clamp(3.6rem, 9vw, 8rem); font-weight: 400;
+  letter-spacing: -0.055em; line-height: 0.87;
+}
+.glyph-intro h1 em { color: var(--amber); font-style: italic; }
+.glyph-lede {
+  position: relative; z-index: 1; max-width: 55ch; margin: 30px 0 0; color: #a5c1a1;
+  font-family: var(--font-geist-sans), Arial, sans-serif; font-size: 15px; line-height: 1.65;
+}
+.glyph-readout {
+  position: relative; z-index: 1; justify-content: flex-start; max-width: 420px;
+  margin-top: 42px; padding-top: 14px; border-top: 1px solid var(--grid);
+  color: var(--muted); font-size: 10px; letter-spacing: 0.11em; text-transform: uppercase;
+}
+.glyph-readout strong {
+  color: var(--phosphor); font-size: 28px; font-weight: 400; letter-spacing: 0;
+}
+.readout-label { color: var(--amber); }
+.glyph-controls, .glyph-ranking { padding: 30px clamp(22px, 5vw, 58px); }
+.glyph-controls { background: var(--ink-soft); border-bottom: 1px solid var(--grid); }
+.glyph-section-head { margin-bottom: 22px; }
+.glyph-section-head > div { display: flex; align-items: baseline; gap: 13px; }
+.glyph-section-index { color: var(--amber); font-size: 11px; }
+.glyph-section-head h2 {
+  margin: 0; color: var(--phosphor); font-size: 15px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.glyph-section-meta, .glyph-help, .glyph-honesty {
+  color: var(--muted); font-size: 11px; line-height: 1.6;
+}
+.glyph-tag-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.glyph-tag {
+  display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 8px;
+  min-height: 44px; padding: 9px 10px; border: 1px solid var(--grid);
+  background: transparent; color: var(--phosphor-dim); font-size: 11px; text-align: left;
+}
+.glyph-tag:hover, .glyph-tag.is-active { border-color: var(--phosphor); color: var(--phosphor); }
+.glyph-tag.is-active { background: rgba(182, 255, 106, 0.08); }
+.glyph-tag-mark { color: var(--amber); }
+.glyph-tag-state { font-size: 9px; letter-spacing: 0.08em; }
+.glyph-help { max-width: 70ch; margin: 18px 0 0; }
+.glyph-field-labels {
+  display: grid; grid-template-columns: 65px minmax(0, 1fr) minmax(160px, 0.6fr);
+  padding: 0 14px 10px; color: var(--muted); font-size: 9px; letter-spacing: 0.13em;
+}
+.glyph-records { margin: 0; padding: 0; list-style: none; }
+.glyph-record {
+  display: grid; grid-template-columns: 65px minmax(0, 1fr) minmax(160px, 0.6fr);
+  align-items: center; gap: 16px; padding: 18px 14px; border-top: 1px solid var(--grid);
+}
+.glyph-record.is-leading { background: rgba(182, 255, 106, 0.055); }
+.glyph-position { color: var(--amber); font-size: 12px; }
+.glyph-record-copy h3 {
+  margin: 0; color: var(--phosphor); font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-size: 16px; font-weight: 600;
+}
+.glyph-record-copy p { margin: 6px 0 0; color: var(--muted); font-size: 10px; }
+.glyph-density { display: flex; align-items: center; gap: 12px; }
+.glyph-density-track {
+  flex: 1; height: 8px; border: 1px solid var(--grid);
+  background: repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 20%);
+}
+.glyph-density-fill {
+  display: block; width: var(--fill); height: 100%; background: var(--phosphor);
+  box-shadow: 0 0 10px rgba(182, 255, 106, 0.35);
+}
+.glyph-score { min-width: 46px; color: var(--amber); font-size: 10px; text-align: right; }
+.glyph-honesty { max-width: 74ch; margin: 24px 0 0 65px; }
+
+@media (max-width: 720px) {
+  .glyph-shell { padding: 0; }
+  .glyph-frame { border-right: 0; border-left: 0; }
+  .glyph-masthead, .glyph-footer { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .glyph-status { justify-content: flex-start; }
+  .glyph-intro { padding: 52px 22px 42px; }
+  .glyph-intro h1 { font-size: clamp(3.4rem, 17vw, 5.8rem); }
+  .glyph-tag-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .glyph-field-labels, .glyph-record { grid-template-columns: 38px minmax(0, 1fr); }
+  .glyph-field-labels { column-gap: 10px; font-size: 8px; }
+  .glyph-field-labels span:first-child { visibility: hidden; }
+  .glyph-field-labels span:last-child { display: none; }
+  .glyph-density { grid-column: 2; }
+  .glyph-record { gap: 10px; padding: 16px 0; }
+  .glyph-record-copy h3 { font-size: 14px; }
+  .glyph-honesty { margin-left: 0; }
 }

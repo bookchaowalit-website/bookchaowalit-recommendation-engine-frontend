@@ -1,139 +1,149 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 
-function Shell({
-  title,
-  subtitle,
-  badge = "Portfolio demo · local-only",
-  children,
-}: {
+type Item = {
+  id: string;
   title: string;
-  subtitle: string;
-  badge?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-100">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <header className="mb-8">
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">{badge}</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">{title}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">{subtitle}</p>
-        </header>
-        {children}
-        <footer className="mt-10 border-t border-zinc-200 pt-4 text-xs text-zinc-500 dark:border-zinc-800">
-          Honest demo: no multi-tenant backend. State (if any) stays in this browser.
-        </footer>
-      </div>
-    </div>
-  );
-}
+  tags: string[];
+};
 
-function Button({
-  children,
-  onClick,
-  variant = "primary",
-  disabled,
-  type = "button",
-  className = "",
-}: {
-  children: ReactNode;
-  onClick?: () => void;
-  variant?: "primary" | "secondary" | "ghost" | "danger";
-  disabled?: boolean;
-  type?: "button" | "submit";
-  className?: string;
-}) {
-  const base =
-    "inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition disabled:opacity-50 " +
-    className;
-  const styles =
-    variant === "primary"
-      ? "bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900"
-      : variant === "secondary"
-        ? "bg-white text-zinc-900 ring-1 ring-zinc-200 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-700"
-        : variant === "danger"
-          ? "bg-red-600 text-white hover:bg-red-500"
-          : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900";
-  return (
-    <button type={type} disabled={disabled} onClick={onClick} className={`${base} ${styles}`}>
-      {children}
-    </button>
-  );
-}
-
-const inputClass =
-  "w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950";
-
-function useLocalStorage<T>(key: string, initial: T) {
-  const [value, setValue] = useState<T>(initial);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(key);
-      if (raw != null) setValue(JSON.parse(raw) as T);
-    } catch {
-      /* ignore */
-    }
-    setReady(true);
-  }, [key]);
-  useEffect(() => {
-    if (!ready) return;
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [key, value, ready]);
-  return [value, setValue] as const;
-}
-
-function uid() {
-  return crypto.randomUUID();
-}
-
-async function copyText(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-
-const ITEMS = [
+const ITEMS: Item[] = [
   { id: "1", title: "Local-first notes", tags: ["productivity", "local", "writing"] },
   { id: "2", title: "Kanban for freelancers", tags: ["productivity", "work"] },
   { id: "3", title: "Synth playlist", tags: ["music", "focus"] },
   { id: "4", title: "SEO checklist", tags: ["seo", "web"] },
   { id: "5", title: "Habit streaks", tags: ["health", "productivity"] },
 ];
-const ALL = Array.from(new Set(ITEMS.flatMap((i) => i.tags)));
+
+const ALL_TAGS = Array.from(new Set(ITEMS.flatMap((item) => item.tags)));
+
 export default function Home() {
   const [liked, setLiked] = useState<string[]>(["productivity"]);
-  const ranked = useMemo(() => {
-    return ITEMS.map((i) => ({
-      ...i,
-      score: i.tags.filter((t) => liked.includes(t)).length,
-    })).sort((a, b) => b.score - a.score);
-  }, [liked]);
+  const ranked = useMemo(
+    () =>
+      ITEMS.map((item) => ({
+        ...item,
+        score: item.tags.filter((tag) => liked.includes(tag)).length,
+      })).sort((a, b) => b.score - a.score || a.title.localeCompare(b.title)),
+    [liked],
+  );
+
   return (
-    <Shell title="Recommendation Engine" subtitle="Toggle interests and watch rankings update via tag overlap scores.">
-      <div className="mb-4 flex flex-wrap gap-2">
-        {ALL.map((t) => (
-          <Button key={t} variant={liked.includes(t) ? "primary" : "secondary"} onClick={() => setLiked((p) => p.includes(t) ? p.filter((x) => x !== t) : [...p, t])}>{t}</Button>
-        ))}
-      </div>
-      <ol className="space-y-2">
-        {ranked.map((i, idx) => (
-          <li key={i.id} className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
+    <main className="glyph-shell">
+      <div className="glyph-frame">
+        <header className="glyph-masthead">
+          <div className="glyph-brand">
+            <span className="glyph-led" aria-hidden="true" />
+            <span>GLYPH / RANK</span>
+          </div>
+          <div className="glyph-status">
+            <span>LOCAL SIGNAL LAB</span>
+            <span className="glyph-status-dot">NO MODEL</span>
+          </div>
+        </header>
+
+        <section className="glyph-intro">
+          <div className="glyph-rule-label">
+            <span>TAG-OVERLAP RECOMMENDER</span>
+            <span>BUILD 01</span>
+          </div>
+          <h1>
+            Find the next
+            <br />
+            <em>signal.</em>
+          </h1>
+          <p className="glyph-lede">
+            Choose a few interests. The field reorders five authored records by the
+            tags they share with you.
+          </p>
+          <div className="glyph-readout">
+            <span className="readout-label">ACTIVE VECTOR</span>
+            <strong>{liked.length.toString().padStart(2, "0")}</strong>
+            <span>interest tags selected</span>
+          </div>
+        </section>
+
+        <section className="glyph-controls" aria-labelledby="input-vector-title">
+          <div className="glyph-section-head">
             <div>
-              <span className="mr-2 text-zinc-500">#{idx + 1}</span>
-              <span className="font-medium">{i.title}</span>
-              <span className="ml-2 text-xs text-zinc-500">{i.tags.join(", ")}</span>
+              <span className="glyph-section-index">A</span>
+              <h2 id="input-vector-title">Input vector</h2>
             </div>
-            <span className="font-mono text-sm">score {i.score}</span>
-          </li>
-        ))}
-      </ol>
-    </Shell>
+            <span className="glyph-section-meta">{liked.length} / {ALL_TAGS.length} active</span>
+          </div>
+          <div className="glyph-tag-grid">
+            {ALL_TAGS.map((tag) => {
+              const active = liked.includes(tag);
+              return (
+                <button
+                  key={tag}
+                  type="button"
+                  className={"glyph-tag " + (active ? "is-active" : "")}
+                  aria-pressed={active}
+                  onClick={() =>
+                    setLiked((current) =>
+                      active ? current.filter((value) => value !== tag) : [...current, tag],
+                    )
+                  }
+                >
+                  <span className="glyph-tag-mark" aria-hidden="true">{active ? "1" : "0"}</span>
+                  <span>{tag}</span>
+                  <span className="glyph-tag-state">{active ? "ON" : "OFF"}</span>
+                </button>
+              );
+            })}
+          </div>
+          <p className="glyph-help">
+            Toggle a tag to change the signal. A record earns one point for every
+            active tag it shares.
+          </p>
+        </section>
+
+        <section className="glyph-ranking" aria-labelledby="ranking-field-title">
+          <div className="glyph-section-head">
+            <div>
+              <span className="glyph-section-index">B</span>
+              <h2 id="ranking-field-title">Ranking field</h2>
+            </div>
+            <span className="glyph-section-meta">5 authored records / local sample</span>
+          </div>
+          <div className="glyph-field-labels" aria-hidden="true">
+            <span>POSITION</span>
+            <span>RECORD / TAG TRACE</span>
+            <span>MATCH DENSITY</span>
+          </div>
+          <ol className="glyph-records">
+            {ranked.map((item, index) => (
+              <li key={item.id} className={"glyph-record " + (index === 0 ? "is-leading" : "")}>
+                <span className="glyph-position">{String(index + 1).padStart(2, "0")}</span>
+                <div className="glyph-record-copy">
+                  <h3>{item.title}</h3>
+                  <p>{item.tags.join("  /  ")}</p>
+                </div>
+                <div className="glyph-density" aria-label={item.score + " matching tags"}>
+                  <div className="glyph-density-track">
+                    <span
+                      className="glyph-density-fill"
+                      style={{ "--fill": (item.score * 20) + "%" } as CSSProperties}
+                    />
+                  </div>
+                  <span className="glyph-score">{item.score} / {item.tags.length}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="glyph-honesty">
+            This is a transparent tag-overlap demo, not a trained recommendation
+            model. The sample records and scores stay in this browser.
+          </p>
+        </section>
+
+        <footer className="glyph-footer">
+          <span>BOOK / DEV TOOLS</span>
+          <span>TOGGLE · TRACE · REORDER</span>
+        </footer>
+      </div>
+    </main>
   );
 }
